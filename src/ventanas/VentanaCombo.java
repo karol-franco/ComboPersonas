@@ -119,12 +119,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		this.miCoordinador = miCoordinador;
 	}
 
-	public void cargarRegistros(PersonaVo persona) {
-		txtDoc.setText(persona.getDocumento());
-		txtNombre.setText(persona.getNombre());
-		txtDireccion.setText(persona.getDireccion());
-		txtTelefono.setText(persona.getTelefono());	
-	}
+
 
 	private void llenarTabla(ArrayList<PersonaVo> listaPersonas) {
 		String titulos[] = { "Documento", "Nombre", "Dirección", "Teléfono" };
@@ -233,7 +228,20 @@ public class VentanaCombo extends JFrame implements ActionListener {
 	        JOptionPane.showMessageDialog(this, "Error al actualizar: " + e.getMessage());
 	    }
 	}
-
+	
+	public void cargarRegistros(PersonaVo persona) {
+		txtDoc.setText(persona.getDocumento());
+		txtNombre.setText(persona.getNombre());
+		txtDireccion.setText(persona.getDireccion());
+		txtTelefono.setText(persona.getTelefono());	
+	}
+	public void cargarRegistros() {
+		if (miCoordinador != null) {
+			ArrayList<PersonaVo> listaPersonas = miCoordinador.consultarListaPersonas();
+			llenarCombo(listaPersonas);
+			llenarTabla(listaPersonas);
+		}
+	}
 
 
 	
