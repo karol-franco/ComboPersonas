@@ -37,8 +37,14 @@ public class Coordinador {
 	    }
 	}
 
-	public boolean eliminarPersona(PersonaVo personaObtenida) {
-		return miPersonaDao.eliminarUsuario(personaObtenida);
+	public boolean eliminarPersona(PersonaVo personaEliminada) {
+		
+		return miPersonaDao.eliminarPersona(personaEliminada);
+	}
+
+	public boolean actualizarPersona(PersonaVo personaActualizada) {
+		
+		return miPersonaDao.actualizarPersona(personaActualizada);
 	}
 
 }

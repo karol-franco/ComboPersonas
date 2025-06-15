@@ -10,8 +10,8 @@ public class Relaciones {
 		Coordinador miCoordinador = new Coordinador();
 
 		miVentanaCombo.setCoordinador(miCoordinador);
-		miCoordinador.setVentanaCombo(miVentanaCombo);
 		miVentanaCombo.cargarRegistros();
 		miVentanaCombo.setVisible(true);
+		miVentanaCombo.cargarRegistros();
 	}
 }

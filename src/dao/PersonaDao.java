@@ -82,26 +82,46 @@ public class PersonaDao {
 	}
 
 
-	public boolean eliminarUsuario(PersonaVo personaEliminada) {
-		
+	public boolean eliminarPersona(PersonaVo personaEliminada) {
+
 		try {
-			Conexion conexion = new Conexion();
-			Connection conectar = conexion.getConnection();
-			String sql = "DELETE FROM persona WHERE documento= ?";
-				java.sql.PreparedStatement ps= conectar.prepareStatement(sql);
-			ps.setString(1, personaEliminada.getDocumento());
-			int fila = ps.executeUpdate();
+			Connection conectar = Conexion.getInstancia().getConnection();
+			String sql = "DELETE FROM persona WHERE documento = ?";
+			java.sql.PreparedStatement ps = conectar.prepareStatement(sql);
+			
+		      ps.setString(1, personaEliminada.getDocumento());
+		      
+		    int fila = ps.executeUpdate();
 		    ps.close();
 		    conectar.close();
 		    return fila > 0;
 		
 		}catch(Exception e) {
 		     System.out.println("Error al eliminar persona: " + e.getMessage());
+		     return false;
 		}
+	}
+
+
+	public boolean actualizarPersona(PersonaVo persona) {
 		
-		
-		
-		return false;
+		try {
+			Connection con = Conexion.getInstancia().getConnection();
+	        String sql = "UPDATE persona SET nombre = ?, direccion = ?, telefono = ? WHERE documento = ?";
+	        java.sql.PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setString(1, persona.getNombre());
+	        ps.setString(2, persona.getDireccion());
+	        ps.setString(3, persona.getTelefono());
+	        ps.setString(4, persona.getDocumento());
+
+	        int filas = ps.executeUpdate();
+	        ps.close();
+	        con.close();
+	        return filas > 0;
+	    } catch (Exception e) {
+	        System.out.println("Error al actualizar persona: " + e.getMessage());
+	        return false;
+	    }
 	}
 
 

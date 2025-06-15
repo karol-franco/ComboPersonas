@@ -3,12 +3,14 @@ package conexion;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Conexion {
 
     private String nombreBd = "conexionBDjava";
     private String usuario = "root";
     private String password = "1234";
+    private static Conexion instancia;
     
     // Agregamos timezone y otras propiedades recomendadas
     private String url = "jdbc:mysql://localhost/" + nombreBd + "?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true";
@@ -45,4 +47,16 @@ public class Conexion {
             System.err.println("Error al cerrar la conexión: " + e.getMessage());
         }
     }
+
+	public static Conexion getInstancia()  {
+		if(instancia == null) {
+			try {
+				instancia= new Conexion();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return instancia;
+	}
 }

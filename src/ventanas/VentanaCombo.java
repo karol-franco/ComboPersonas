@@ -17,13 +17,14 @@ public class VentanaCombo extends JFrame implements ActionListener {
 	private JTextField txtDireccion;
 	private JTextField txtDoc;
 	private JTextField txtTelefono;
-	private JComboBox<String> comboPersonas;
+	private JComboBox<PersonaVo> comboPersonas;
 	private JButton btnRegistrar;
 	private Coordinador miCoordinador;
 	JButton btnEliminar;
 	private JLabel lblSeleccion;
 	private JTable tablaNombres;
 	private JScrollPane miBarra1;
+	private JButton btnActualizar;
 
 	public VentanaCombo() {
 		getContentPane().setLayout(null);
@@ -87,7 +88,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		getContentPane().add(miBarra1);
 
 		comboPersonas = new JComboBox<>();
-		comboPersonas.setModel(new DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+		comboPersonas.setModel(new DefaultComboBoxModel(new String[] { "Seleccione" }));
 		comboPersonas.setSelectedIndex(0);
 		comboPersonas.setBounds(139, 221, 224, 20);
 		comboPersonas.addActionListener(this);
@@ -104,7 +105,12 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setBounds(189, 139, 123, 35);
 		getContentPane().add(btnEliminar);
-		btnEliminar.addActionListener(this);
+		
+		
+		btnActualizar = new JButton("Actualizar");
+		btnActualizar.setBounds(21, 139, 123, 35);
+		getContentPane().add(btnActualizar);
+		btnActualizar.addActionListener(this);
 		
 
 	}
@@ -113,12 +119,11 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		this.miCoordinador = miCoordinador;
 	}
 
-	public void cargarRegistros() {
-		if (miCoordinador != null) {
-			ArrayList<PersonaVo> listaPersonas = miCoordinador.consultarListaPersonas();
-			llenarCombo(listaPersonas);
-			llenarTabla(listaPersonas);
-		}
+	public void cargarRegistros(PersonaVo persona) {
+		txtDoc.setText(persona.getDocumento());
+		txtNombre.setText(persona.getNombre());
+		txtDireccion.setText(persona.getDireccion());
+		txtTelefono.setText(persona.getTelefono());	
 	}
 
 	private void llenarTabla(ArrayList<PersonaVo> listaPersonas) {
@@ -142,11 +147,10 @@ public class VentanaCombo extends JFrame implements ActionListener {
 
 	private void llenarCombo(ArrayList<PersonaVo> listaPersonas) {
 		comboPersonas.removeAllItems();
-		comboPersonas.addItem("Seleccione");
+		comboPersonas.addItem(null);
 		for (PersonaVo persona : listaPersonas) {
-			String item = persona.getDocumento() + " - " + persona.getNombre();
-			comboPersonas.addItem(item);
-		}
+	        comboPersonas.addItem(persona);
+	    }
 	}
 
 	private void registrarPersonas() {
@@ -166,50 +170,74 @@ public class VentanaCombo extends JFrame implements ActionListener {
 			cargarRegistros();
 		}
 		if (e.getSource() == comboPersonas) {
-			if (comboPersonas.getSelectedIndex() > 0) {
-				lblSeleccion.setText(comboPersonas.getSelectedItem().toString());
-			} else {
-				lblSeleccion.setText("");
-			}
+		    PersonaVo seleccionada = (PersonaVo) comboPersonas.getSelectedItem();
+
+		    if (seleccionada != null) {
+		        txtDoc.setText(seleccionada.getDocumento());
+		        txtNombre.setText(seleccionada.getNombre());
+		        txtDireccion.setText(seleccionada.getDireccion());
+		        txtTelefono.setText(seleccionada.getTelefono());
+		        lblSeleccion.setText(seleccionada.toString());
+		    } else {
+		        txtDoc.setText("");
+		        txtNombre.setText("");
+		        txtDireccion.setText("");
+		        txtTelefono.setText("");
+		        lblSeleccion.setText("");
+		    }
+		}
+
+		if(e.getSource()==btnEliminar) {
+			//eliminarPersonas();
+			cargarRegistros();
+		}
+		if (e.getSource()==btnActualizar) {
+			ActualizarRegistro();
+			cargarRegistros();
 			
-		}if(e.getSource()==btnEliminar) {
-			eliminarPersonas();
 			
 		}
 	}
 
-	private void eliminarPersonas() {
+	private void ActualizarRegistro() {
+
+	    if (comboPersonas.getSelectedIndex() <= 0 || comboPersonas.getSelectedItem() == null) {
+	        JOptionPane.showMessageDialog(this, "Debes seleccionar una persona del combo para actualizar.");
+	        return;
+	    }
+
 	    try {
-	        PersonaVo personaObtenida = (PersonaVo) comboPersonas.getSelectedItem();
-	        
-	        if (personaObtenida == null) {
-	            JOptionPane.showMessageDialog(this, "No hay ninguna persona seleccionada.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-	            return;
+	        PersonaVo personaSeleccionada = (PersonaVo) comboPersonas.getSelectedItem();
+
+	        PersonaVo personaActualizada = new PersonaVo();
+	        personaActualizada.setDocumento(personaSeleccionada.getDocumento()); 
+	        personaActualizada.setNombre(txtNombre.getText());
+	        personaActualizada.setDireccion(txtDireccion.getText());
+	        personaActualizada.setTelefono(txtTelefono.getText());
+
+	        boolean actualizado = miCoordinador.actualizarPersona(personaActualizada);
+
+	        if (actualizado) {
+	            JOptionPane.showMessageDialog(this, "Persona actualizada correctamente.\nVuelve a seleccionar otra si deseas.");
+	            cargarRegistros(); 
+	            comboPersonas.setSelectedIndex(0);
+	            txtDoc.setText("");
+	            txtNombre.setText("");
+	            txtDireccion.setText("");
+	            txtTelefono.setText("");
+	        } else {
+	            JOptionPane.showMessageDialog(this, "No se pudo actualizar la persona.");
 	        }
 
-	        // Confirmación
-	        int confirmacion = JOptionPane.showConfirmDialog(this,
-	            "¿Estás seguro de que deseas eliminar a " + personaObtenida.getNombre() + "?",
-	            "Confirmar eliminación",
-	            JOptionPane.YES_NO_OPTION);
-
-	        if (confirmacion == JOptionPane.YES_OPTION) {
-	            boolean eliminado = miCoordinador.eliminarPersona(personaObtenida);
-	            
-	            if (eliminado) {
-	                JOptionPane.showMessageDialog(this, "Persona eliminada exitosamente.");
-
-	                // Actualizar comboBox: eliminar la persona
-	                comboPersonas.removeItem(personaObtenida);
-	            } else {
-	                JOptionPane.showMessageDialog(this, "No se pudo eliminar la persona.", "Error", JOptionPane.ERROR_MESSAGE);
-	            }
-	            
-	        }
 	    } catch (Exception e) {
-	        JOptionPane.showMessageDialog(this, "Error al eliminar la persona: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "Error al actualizar: " + e.getMessage());
 	    }
 	}
 
+
+
+	
+
+
+	
 }
