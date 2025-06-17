@@ -105,6 +105,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setBounds(189, 139, 123, 35);
 		getContentPane().add(btnEliminar);
+		btnEliminar.addActionListener(this);
 		
 		
 		btnActualizar = new JButton("Actualizar");
@@ -165,9 +166,11 @@ public class VentanaCombo extends JFrame implements ActionListener {
 			cargarRegistros();
 		}
 		if (e.getSource() == comboPersonas) {
-		    PersonaVo seleccionada = (PersonaVo) comboPersonas.getSelectedItem();
+		   
 
-		    if (seleccionada != null) {
+		    if (comboPersonas.getSelectedIndex() > 0) {
+		    	 PersonaVo seleccionada = (PersonaVo) comboPersonas.getSelectedItem();
+		    	
 		        txtDoc.setText(seleccionada.getDocumento());
 		        txtNombre.setText(seleccionada.getNombre());
 		        txtDireccion.setText(seleccionada.getDireccion());
@@ -183,7 +186,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		}
 
 		if(e.getSource()==btnEliminar) {
-			//eliminarPersonas();
+			eliminarPersonas();
 			cargarRegistros();
 		}
 		if (e.getSource()==btnActualizar) {
@@ -194,8 +197,30 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		}
 	}
 
-	private void ActualizarRegistro() {
+	private void eliminarPersonas() {
+		if(comboPersonas.getSelectedIndex() < 0 || comboPersonas.getSelectedItem() == null) {
+			JOptionPane.showMessageDialog(this, "Seleccione la persona a eliminar. ");
+			return;
+		}
+			
+			try {
+				PersonaVo personaObtenida = (PersonaVo) comboPersonas.getSelectedItem();
 
+				boolean eliminado = miCoordinador.eliminarPersona(personaObtenida);
+				
+				if(eliminado) {
+					JOptionPane.showMessageDialog(this, "Usuario eliminado con demasiado exito");
+				}else {
+					JOptionPane.showMessageDialog(this, "Usuario no eliminado");
+				}
+				
+			} catch (Exception e) {
+			    JOptionPane.showMessageDialog(this, "Error al eliminar: " + e.getMessage());
+			}
+		
+	}
+
+	private void ActualizarRegistro() {
 	    if (comboPersonas.getSelectedIndex() <= 0 || comboPersonas.getSelectedItem() == null) {
 	        JOptionPane.showMessageDialog(this, "Debes seleccionar una persona del combo para actualizar.");
 	        return;
@@ -204,8 +229,10 @@ public class VentanaCombo extends JFrame implements ActionListener {
 	    try {
 	        PersonaVo personaSeleccionada = (PersonaVo) comboPersonas.getSelectedItem();
 
+	        String documentoAnterior = personaSeleccionada.getDocumento();
+
 	        PersonaVo personaActualizada = new PersonaVo();
-	        personaActualizada.setDocumento(personaSeleccionada.getDocumento()); 
+	        personaActualizada.setDocumento(documentoAnterior);
 	        personaActualizada.setNombre(txtNombre.getText());
 	        personaActualizada.setDireccion(txtDireccion.getText());
 	        personaActualizada.setTelefono(txtTelefono.getText());
@@ -214,12 +241,17 @@ public class VentanaCombo extends JFrame implements ActionListener {
 
 	        if (actualizado) {
 	            JOptionPane.showMessageDialog(this, "Persona actualizada correctamente.\nVuelve a seleccionar otra si deseas.");
-	            cargarRegistros(); 
-	            comboPersonas.setSelectedIndex(0);
-	            txtDoc.setText("");
-	            txtNombre.setText("");
-	            txtDireccion.setText("");
-	            txtTelefono.setText("");
+
+	            cargarRegistros();
+
+	            for (int i = 1; i < comboPersonas.getItemCount(); i++) {
+	                PersonaVo personaEnCombo = comboPersonas.getItemAt(i);
+	                if (personaEnCombo.getDocumento().equals(documentoAnterior)) {
+	                    comboPersonas.setSelectedIndex(i);
+	                    break;
+	                }
+	            }
+
 	        } else {
 	            JOptionPane.showMessageDialog(this, "No se pudo actualizar la persona.");
 	        }
@@ -228,6 +260,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 	        JOptionPane.showMessageDialog(this, "Error al actualizar: " + e.getMessage());
 	    }
 	}
+
 	
 	public void cargarRegistros(PersonaVo persona) {
 		txtDoc.setText(persona.getDocumento());
@@ -243,7 +276,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 		}
 	}
 
-
+	
 	
 
 

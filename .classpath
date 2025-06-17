@@ -6,7 +6,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.datatools.connectivity.jdt.DRIVERLIBRARY/Other Driver Default"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="config/properties/|config.properties/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/config.properties"/>
 	<classpathentry kind="lib" path="C:/Users/karol/Downloads/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>

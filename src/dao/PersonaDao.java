@@ -123,6 +123,17 @@ public class PersonaDao {
 	        return false;
 	    }
 	}
+	public int actualizarPersonas(ArrayList<PersonaVo> personas) {
+	    int actualizados = 0;
+
+	    for (PersonaVo persona : personas) {
+	        if (actualizarPersona(persona)) {
+	            actualizados++;
+	        }
+	    }
+
+	    return actualizados;
+	}
 
 
 	

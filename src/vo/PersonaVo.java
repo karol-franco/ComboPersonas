@@ -7,6 +7,8 @@ public class PersonaVo {
 	private String direccion;
 	private String telefono;
 	
+
+
 	public String getDocumento() {
 		return documento;
 	}
@@ -59,9 +61,10 @@ public class PersonaVo {
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
+
 	@Override
 	public String toString() {
-	    return documento + " - " + nombre;
+	    return nombre + " - " + documento;
 	}
 
 }
