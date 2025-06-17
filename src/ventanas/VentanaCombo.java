@@ -209,7 +209,7 @@ public class VentanaCombo extends JFrame implements ActionListener {
 				boolean eliminado = miCoordinador.eliminarPersona(personaObtenida);
 				
 				if(eliminado) {
-					JOptionPane.showMessageDialog(this, "Usuario eliminado con demasiado exito");
+					JOptionPane.showMessageDialog(this, "Usuario eliminado");
 				}else {
 					JOptionPane.showMessageDialog(this, "Usuario no eliminado");
 				}
